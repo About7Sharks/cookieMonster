@@ -1,26 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookie Monster</title>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </head>
+<style>
+    body{
+        padding: 30px;
+        overflow-x: hidden;
+    }
+</style>
 <body>
     <h1>"C is for cookie and cookie is or me" -cookie monster</h1>
-    <p>The goal of this site is to easily be able to see what information your browser has stored from the sites you visit. If this site displays information, other sites can see it too!</p>
-    
+    <p>The goal of this site is to easily be able to see what information your browser is leaking to sites. If this site displays information, other sites can see it too!</p>
+
+    <h3>IP</h3>
+    <span id=ipInfo></span>
     <h3>Local Storage</h3>
     <span id=localStorage></span>
     <h3>Session Storage</h3>
     <span id=sessionStorage></span>
     <h3>Cookies</h3>
     <span id=cookies></span>
-    
+
     <script>
-        document.getElementById('localStorage').innerHTML=JSON.stringify(window.localStorage)
-        document.getElementById('sessionStorage').innerHTML=JSON.stringify(window.sessionStorage)
-        document.getElementById('cookies').innerHTML=JSON.stringify(document.cookie)
+        document.getElementById('localStorage').innerHTML = JSON.stringify(window.localStorage)
+        document.getElementById('sessionStorage').innerHTML = JSON.stringify(window.sessionStorage)
+        document.getElementById('cookies').innerHTML = JSON.stringify(document.cookie)
+
+
+
+
+        //function calls
+        getIp()
+
+        //functions
+        async function getIp() {
+            try {
+                let info='<ul>'
+                //get IP for more in depth search
+                let IP = await fetch("https://api.ipify.org/?format=json")
+                IP.json().then(val => {
+                    fetch(`https://json.geoiplookup.io/${val.ip}`).then(res=>{res.json()
+                    .then(val=>{
+                        for (item in val){
+                            info+=`<li><strong>${item}</strong>: ${val[item]}</li>`
+                        }
+                        info+='</ul>'
+                        document.getElementById('ipInfo').innerHTML=info
+                    })})
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        }
     </script>
 </body>
+
 </html>
